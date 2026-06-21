@@ -1,0 +1,41 @@
+name: Build Chatbox 1.19
+on:
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-12
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          ref: v1.19.0
+
+      - name: Extract Source
+        run: |
+          unzip chatbox-1.19.zip -d ./source_folder
+          cd source_folder/*
+          mv * ../../ || true
+          cd ../../
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install PNPM
+        run: npm install -g pnpm@7
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build DMG
+        run: pnpm run package
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Upload DMG Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Chatbox-1.19-Mac-Intel
+          path: release/app/dist/*.dmg
