@@ -28,8 +28,17 @@ jobs:
       - name: Install PNPM
         run: npm install -g pnpm@7
 
+      - name: Delete Engine Restrictions (자물쇠 강제 파괴)
+        run: |
+          node -e "
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          delete pkg.engines;
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
+
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile --ignore-engines
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build DMG
         run: pnpm run package
