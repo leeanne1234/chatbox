@@ -5,6 +5,8 @@ on:
 jobs:
   build-mac:
     runs-on: macos-14
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -27,7 +29,7 @@ jobs:
         run: npm install -g pnpm@7
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile --ignore-engine
+        run: pnpm install --no-frozen-lockfile --ignore-engines
 
       - name: Build DMG
         run: pnpm run package
